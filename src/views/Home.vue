@@ -6,45 +6,44 @@
       </div>
     </div>
     <div v-if="!showLoader">
-      <v-container fluid>
-        <v-row align="center" justify="space-between" class="menuWrapper">
-          <v-col cols="1">
-            <v-btn text color="primary"
-              ><v-icon>mdi-user</v-icon
-              ><span v-html="homeContent.content.header.nombre"
-            /></v-btn>
-          </v-col>
-          <v-spacer></v-spacer>
-          <v-col cols="1">
-            <v-img
-              max-height="60"
-              max-width="60"
-              :src="homeContent.content.header.logoImg"
-              @click="
-                gotopage(
-                  homeContent.content.header.logoURL,
-                  homeContent.content.header.newWindowLogo
-                )
-              "
-            ></v-img>
-          </v-col>
-        </v-row>
-      </v-container>
+      <v-row align="center" justify="space-between" class="menuWrapper">
+        <v-col cols="1">
+          <v-btn text color="primary"
+            ><v-icon>mdi-user</v-icon
+            ><span v-html="homeContent.content.header.nombre"
+          /></v-btn>
+        </v-col>
+        <v-spacer></v-spacer>
+        <v-col cols="1">
+          <v-img
+            max-height="60"
+            max-width="60"
+            :src="homeContent.content.header.logoImg"
+            @click="
+              gotopage(
+                homeContent.content.header.logoURL,
+                homeContent.content.header.newWindowLogo
+              )
+            "
+          ></v-img>
+        </v-col>
+      </v-row>
+
+      <v-parallax
+        dark
+        :src="homeContent.content.header.bannerImg"
+        @click="
+          gotopage(
+            homeContent.content.header.bannerUrl,
+            homeContent.content.header.newWindowBanner
+          )
+        "
+      >
+      </v-parallax>
 
       <v-container>
         <v-row justify="center">
           <v-col cols="12">
-            <v-parallax
-              dark
-              :src="homeContent.content.header.bannerImg"
-              @click="
-                gotopage(
-                  homeContent.content.header.bannerUrl,
-                  homeContent.content.header.newWindowBanner
-                )
-              "
-            >
-            </v-parallax>
             <h1
               class="jumboText"
               :style="{
@@ -68,53 +67,55 @@
                     :key="n"
                   >
                     <h4 v-html="team.nombreTeam" class="titleTeam" />
-                    <v-card v-for="(player, n) in team.players" :key="n">
-                      <v-img
-                        max-height="60"
-                        max-width="60"
-                        :src="player.playerImg"
-                        v-bind="attrs"
-                        @click="openModal()"
-                      ></v-img>
+                    <div class="players">
+                      <div
+                        v-for="(player, n) in team.players"
+                        :key="n"
+                        class="player"
+                      >
+                        <v-img
+                          :src="player.playerImg"
+                          v-bind="attrs"
+                          @click.stop="openModal()"
+                        ></v-img>
 
-                      <v-dialog v-model="modal" width="500">
-                        <v-card>
-                          <v-card-title class="text-h5 grey lighten-2">
-                            player.playerNombre
-                          </v-card-title>
-
-                          <v-card-text>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing
-                            elit, sed do eiusmod tempor incididunt ut labore et
-                            dolore magna aliqua. Ut enim ad minim veniam, quis
-                            nostrud exercitation ullamco laboris nisi ut aliquip
-                            ex ea commodo consequat. Duis aute irure dolor in
-                            reprehenderit in voluptate velit esse cillum dolore
-                            eu fugiat nulla pariatur. Excepteur sint occaecat
-                            cupidatat non proident, sunt in culpa qui officia
-                            deserunt mollit anim id est laborum.
-                          </v-card-text>
-
-                          <v-divider></v-divider>
-
-                          <v-card-actions>
-                            <v-spacer></v-spacer>
-                            <v-btn color="primary" text @click="modal = false">
-                              I accept
-                            </v-btn>
-                          </v-card-actions>
-                        </v-card>
-                      </v-dialog>
-                    </v-card>
+                        <v-sheet v-if="modal" :key="n" class="showData">
+                          <v-btn
+                            elevation="2"
+                            @click.stop="closeModal()"
+                          >x</v-btn>
+                          <v-row
+                            align="center"
+                            justify="space-between"
+                            class="menuWrapper"
+                          >
+                            <v-col cols="6">
+                              <v-img
+                                :src="player.playerImg"
+                                v-bind="attrs"
+                              ></v-img>
+                            </v-col>
+                            <v-col cols="6">
+                              <p v-html="player.playerNombre" />
+                              <p v-html="player.playerApellido" />
+                              <p v-html="player.playerEdad" />
+                              <p v-html="player.playerPasatiempo" />
+                              <p v-html="player.playerWebSite" />
+                              <p v-html="player.playerProfesion" />
+                            </v-col>
+                          </v-row>
+                        </v-sheet>
+                      </div>
+                    </div>
                   </v-sheet>
                 </v-col>
               </v-row>
             </v-container>
-            <br /><br /><br /><br /><br /><br />
           </v-col>
         </v-row>
       </v-container>
     </div>
+    <br><br><br><br><br><br><br><br><br><br><br>
   </div>
 </template>
 
@@ -128,6 +129,7 @@ export default {
   components: {},
   data: () => ({
     showLoader: true,
+    show: false,
     modal: false,
   }),
   created() {
@@ -146,7 +148,7 @@ export default {
       if (!loading && data) {
         setTimeout(() => {
           this.showLoader = loading;
-        }, 4000);
+        }, 1000);
       }
       return data;
     },
@@ -171,8 +173,9 @@ export default {
 
 <style scoped>
 .menuWrapper {
-  margin-top: 0rem;
-  background: lemonchiffon;
+  background: #777448;
+  display: flex;
+  align-items: center;
 }
 .jumboText {
   margin: 4rem;
@@ -182,6 +185,25 @@ export default {
   text-align: left;
 }
 
+.players {
+  display: flex;
+  flex-direction: row;
+}
+
+.player {
+  height: 10rem;
+  width: 10rem;
+  border: 1px solid blanchedalmond;
+  border-radius: 5px;
+  margin: 2rem;
+  padding: 1rem;
+}
+.showData {
+  widows: 50%;
+  height: auto;
+  position: absolute;
+  z-index: 99999;
+}
 .progress {
   margin: 0px auto;
   width: 25%;
