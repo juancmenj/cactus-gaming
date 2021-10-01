@@ -188,6 +188,7 @@ export default {
 .players {
   display: flex;
   flex-direction: row;
+  position: relative;
 }
 
 .player {
@@ -197,6 +198,7 @@ export default {
   border-radius: 5px;
   margin: 2rem;
   padding: 1rem;
+  position: relative;
 }
 .showData {
   widows: 50%;
